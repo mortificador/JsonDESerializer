@@ -184,8 +184,8 @@ namespace JSONParser
         float ReadFloatValue(char firstDigit)
         {
             StringBuilder number = new StringBuilder();
+            StringBuilder exp = new StringBuilder();
             number.Append(firstDigit);
-
             char car = jsonText[index];
 
             while (Char.IsDigit(car) || car == '.')
@@ -193,6 +193,23 @@ namespace JSONParser
                 number.Append(car);
                 index++;
                 car = jsonText[index];
+            }
+
+            if (car == 'e')
+            {
+                index++;
+                car = jsonText[index];
+                while (Char.IsDigit(car))
+                {
+                    exp.Append(car);
+                    index++;
+                    car = jsonText[index];
+                }
+
+                float numBase = float.Parse(number.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+                float numExp = float.Parse(exp.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+
+                return (float)Math.Pow(numBase, numExp);
             }
 
             return float.Parse(number.ToString(), System.Globalization.CultureInfo.InvariantCulture);
